@@ -33,5 +33,46 @@ class LibraryTests {
         assertEquals(true, result["success"])
         assertEquals("TEST", result["result"])
     }
+    
+    @Test
+    fun testHomeScreenManager() {
+        val manager = HomeScreenManager()
+        val homeScreen = manager.createDefaultHomeScreen()
+        assertEquals("Welcome", homeScreen.title)
+        assertTrue(homeScreen.items.isNotEmpty())
+    }
+    
+    @Test
+    fun testHomeScreenToJson() {
+        val manager = HomeScreenManager()
+        val homeScreen = manager.createDefaultHomeScreen()
+        val json = manager.homeScreenToJson(homeScreen)
+        assertTrue(json.isNotEmpty())
+        assertTrue(json.contains("Welcome"))
+    }
+    
+    @Test
+    fun testHomeScreenFromJson() {
+        val manager = HomeScreenManager()
+        val homeScreen = manager.createDefaultHomeScreen()
+        val json = manager.homeScreenToJson(homeScreen)
+        val parsed = manager.createHomeScreenFromJson(json)
+        assertTrue(parsed != null)
+        if (parsed != null) {
+            assertEquals(homeScreen.title, parsed.title)
+        }
+    }
+    
+    @Test
+    fun testFlutterBridgeHomeScreen() {
+        val bridge = FlutterBridge()
+        val result = bridge.executeFunction("createHomeScreen", emptyMap())
+        assertEquals(true, result["success"])
+        val screenData = result["result"] as? Map<*, *>
+        assertTrue(screenData != null)
+        if (screenData != null) {
+            assertEquals("Welcome", screenData["title"])
+        }
+    }
 }
 
